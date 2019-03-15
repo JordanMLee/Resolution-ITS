@@ -1,3 +1,3 @@
-# Resolution ITS is an Enterprise IT Issue Management System
-# 
-funtionality description coming soon
+#### Resolution ITS is an Enterprise IT Issue Management System :computer::clipboard:
+
+funtionality description coming soon💻💻!
