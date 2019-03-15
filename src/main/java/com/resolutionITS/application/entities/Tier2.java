@@ -1,15 +1,18 @@
 package com.resolutionITS.application.entities;
 
-public class Municipality extends Users{
+public class Tier2 extends Users {
 
     private String category;
     //private String username;
 
-    public Municipality(String category) {
+    public Tier2(String category) {
         this.category = category;
         //this.username = username;
     }
 
+
+    public Tier2() {
+    }
 
     public String getCategory() {
         return category;
@@ -18,8 +21,6 @@ public class Municipality extends Users{
     public void setCategory(String category) {
         this.category = category;
     }
-
-    public Municipality() {}
 
 
 }

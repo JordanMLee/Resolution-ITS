@@ -2,24 +2,25 @@ package com.resolutionITS.application.entities;
 
 import java.sql.Date;
 
-public class Incident {
+public class Issue {
 
     String username;
     int uniqid;
-    int incidentid;
-    Date incidentdate;
+    int issueid;
+    Date issuedate;
     String description;
     float latitude;
     float longitude;
 
-    public Incident() {}
+    public Issue() {
+    }
 
-    public Incident(String username, int uniqid, int incidentid,
-                    Date incidentdate, String description, float latitude, float longitude) {
+    public Issue(String username, int uniqid, int issueid,
+                 Date issuedate, String description, float latitude, float longitude) {
         this.username = username;
         this.uniqid = uniqid; //example 1234
-        this.incidentid = incidentid; //example MD-[incidentid]
-        this.incidentdate = incidentdate;
+        this.issueid = issueid; //example MD-[issueid]
+        this.issuedate = issuedate;
         this.description = description;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -41,20 +42,20 @@ public class Incident {
         this.uniqid = uniqid;
     }
 
-    public int getIncidentid() {
-        return incidentid;
+    public int getissueid() {
+        return issueid;
     }
 
-    public void setIncidentid(int incidentid) {
-        this.incidentid = incidentid;
+    public void setissueid(int issueid) {
+        this.issueid = issueid;
     }
 
-    public Date getIncidentdate() {
-        return incidentdate;
+    public Date getissuedate() {
+        return issuedate;
     }
 
-    public void setIncidentdate(Date incidentdate) {
-        this.incidentdate = incidentdate;
+    public void setissuedate(Date issuedate) {
+        this.issuedate = issuedate;
     }
 
     public String getDescription() {
@@ -83,10 +84,8 @@ public class Incident {
 
     @Override
     public String toString() {
-        return  "[ Incident: " + String.valueOf(uniqid) + " with incidentid: " + String.valueOf(incidentid);
+        return "[ Issue: " + uniqid + " with issueid: " + issueid;
     }
-
-
 
 
 }

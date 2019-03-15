@@ -19,7 +19,8 @@ public class Is_deployed_to {
 
     }
 
-    public Is_deployed_to() {}
+    public Is_deployed_to() {
+    }
 
     public int getResourceid() {
         return resourceid;

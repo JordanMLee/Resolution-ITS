@@ -1,12 +1,13 @@
 package com.resolutionITS.application.entities;
 
-public class GovtImpl extends Users {
+public class Tier3 extends Users {
 
     private String agencyoffice;
 
-    public GovtImpl() {}
+    public Tier3() {
+    }
 
-    public GovtImpl(String agencyoffice) {
+    public Tier3(String agencyoffice) {
         this.agencyoffice = agencyoffice;
     }
 

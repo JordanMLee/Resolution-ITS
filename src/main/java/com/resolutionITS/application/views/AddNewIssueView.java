@@ -1,36 +1,31 @@
 package com.resolutionITS.application.views;
 
-import com.resolutionITS.application.entities.Incident;
-import com.resolutionITS.application.entities.Incident_declaration;
+import com.resolutionITS.application.entities.Issue;
+import com.resolutionITS.application.entities.Issue_declaration;
 import com.resolutionITS.application.repos.IssueRepo;
-import com.resolutionITS.application.repos.Incident_declarationRepo;
+import com.resolutionITS.application.repos.Issue_declarationRepo;
 import com.vaadin.navigator.View;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.*;
 import org.springframework.beans.factory.annotation.Autowired;
-
 
 import javax.annotation.PostConstruct;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Random;
 
-@SpringView(name= AddNewIssueView.VIEW)
+@SpringView(name = AddNewIssueView.VIEW)
 public class AddNewIssueView extends VerticalLayout implements View {
     public static final String VIEW = "AddNewIssue";
-
+    Label header = new Label("New Issue Info");
+    Random randomID = new Random();
     @Autowired
     private IssueRepo issueRepo;
-
     @Autowired
-    private Incident_declarationRepo incident_declarationRepo;
-    private Incident incident = new Incident();
-    private Incident_declaration incident_declaration = new Incident_declaration();
-
-    Label header = new Label("New Issue Info");
-
-    Random randomID = new Random();
-    private int incidentID; //
+    private Issue_declarationRepo issue_declarationRepo;
+    private Issue issue = new Issue();
+    private Issue_declaration issue_declaration = new Issue_declaration();
+    private int issueID; //
     private DateField dateField;
     private TextField latitudeTxt;
     private TextField longitudeTxt;
@@ -74,15 +69,16 @@ public class AddNewIssueView extends VerticalLayout implements View {
 
 
     private NativeSelect<String> declaration;
+
     @PostConstruct
     void init() {
         confLabel = new Label();
         // declaration
-        declaration = new NativeSelect<>("Declaration");
+        declaration = new NativeSelect<>("Issue Type");
         declaration.setEmptySelectionAllowed(false);
         declaration.setRequiredIndicatorVisible(true);
 
-        declaration.setItems("MD","EM","FM","FS");
+        declaration.setItems("MD", "EM", "FM", "FS");
         declTypes.put("MD", "Major Disaster");
         declTypes.put("EM", "Emergency");
         declTypes.put("FM", "Fire Management Assistance");
@@ -96,8 +92,8 @@ public class AddNewIssueView extends VerticalLayout implements View {
 
 
         // Location
-        latitudeTxt = new TextField("Latitude");
-        longitudeTxt = new TextField("Longitude");
+        latitudeTxt = new TextField("equipment serial number");
+        longitudeTxt = new TextField("item code");
         latitudeTxt.setRequiredIndicatorVisible(true);
         longitudeTxt.setRequiredIndicatorVisible(true);
 
@@ -117,61 +113,60 @@ public class AddNewIssueView extends VerticalLayout implements View {
         addComponent(header);
         addComponent(declaration);
         addComponent(dateField);
-        addComponents(latitudeTxt,longitudeTxt);
+        addComponents(latitudeTxt, longitudeTxt);
         addComponent(descriptionTxt);
         addComponent(confLabel);
-        setComponentAlignment(header,Alignment.TOP_CENTER);
-        setComponentAlignment(declaration,Alignment.TOP_CENTER);
-        setComponentAlignment(dateField,Alignment.TOP_CENTER);
-        setComponentAlignment(latitudeTxt,Alignment.TOP_CENTER);
-        setComponentAlignment(longitudeTxt,Alignment.TOP_CENTER);
-        setComponentAlignment(descriptionTxt,Alignment.TOP_CENTER);
+        setComponentAlignment(header, Alignment.TOP_CENTER);
+        setComponentAlignment(declaration, Alignment.TOP_CENTER);
+        setComponentAlignment(dateField, Alignment.TOP_CENTER);
+        setComponentAlignment(latitudeTxt, Alignment.TOP_CENTER);
+        setComponentAlignment(longitudeTxt, Alignment.TOP_CENTER);
+        setComponentAlignment(descriptionTxt, Alignment.TOP_CENTER);
 
 
-        horizontalLayout.addComponentsAndExpand(new Button("Main Menu",click->{
+        horizontalLayout.addComponentsAndExpand(new Button("Main Menu", click -> {
             getUI().getNavigator().navigateTo("");
         }), new Button("Save", click -> {
 
-            if ( ( incident.getLatitude() < 90 && incident.getLatitude() > -90)
-                    && (incident.getLongitude() <180 && incident.getLongitude() > -180) ) {
+            if ((issue.getLatitude() < 90 && issue.getLatitude() > -90)
+                    && (issue.getLongitude() < 180 && issue.getLongitude() > -180)) {
 
-                incident.setUsername(getSession().getAttribute("user").toString());
-                incident.setDescription(descriptionTxt.getValue());
-                incident.setIncidentdate(java.sql.Date.valueOf(dateField.getValue()));
-                incidentID = issueRepo.selectIncidentID() + 1;
-                incident.setIncidentid(incidentID);
+                issue.setUsername(getSession().getAttribute("user").toString());
+                issue.setDescription(descriptionTxt.getValue());
+                issue.setissuedate(java.sql.Date.valueOf(dateField.getValue()));
+                issueID = issueRepo.selectissueID() + 1;
+                issue.setissueid(issueID);
 
                 decl = declaration.getValue(); //String
-                //incident_declarationRepo takes in a String, typecast to Declarations,
+                //issue_declarationRepo takes in a String, typecast to Declarations,
                 // returns a String and then converts to integer and back to String before
                 //being stored.
 
 
-//                uniqid = decl + "-" + String.valueOf( Integer.parseInt(incident_declarationRepo.selectuniqID(decl).replaceAll("[^0-9]","")) + 1 );
-                uniqid = Integer.parseInt(incident_declarationRepo.selectuniqID(decl).replaceAll("[^0-9]",""));
+//                uniqid = decl + "-" + String.valueOf( Integer.parseInt(issue_declarationRepo.selectuniqID(decl).replaceAll("[^0-9]","")) + 1 );
+                uniqid = Integer.parseInt(issue_declarationRepo.selectuniqID(decl).replaceAll("[^0-9]", ""));
 
-                incident.setUniqid(uniqid);
-                incident.setLatitude(Float.valueOf(latitudeTxt.getValue()));
-                incident.setLongitude(Float.valueOf(longitudeTxt.getValue()));
+                issue.setUniqid(uniqid);
+                issue.setLatitude(Float.valueOf(latitudeTxt.getValue()));
+                issue.setLongitude(Float.valueOf(longitudeTxt.getValue()));
 
-                issueRepo.insert(incident);
+                issueRepo.insert(issue);
 
-                incident_declaration.setDeclaration(decl);
-                incident_declaration.setUniqid(uniqid);
-                incident_declaration.setIncidentid(incidentID);
-                incident_declarationRepo.insert(incident_declaration);
-                confLabel.setValue(incident.toString() + " added to springbootdb1");
+                issue_declaration.setDeclaration(decl);
+                issue_declaration.setUniqid(uniqid);
+                issue_declaration.setissueid(issueID);
+                issue_declarationRepo.insert(issue_declaration);
+                confLabel.setValue(issue.toString() + " added to springbootdb1");
+            } else {
+                Notification.show("Invalid location, please use xx.xxxx or xxx.xxxx format");
             }
-
-            else { Notification.show("Invalid location, please use xx.xxxx or xxx.xxxx format");}
 
         }));
 
         addComponent(horizontalLayout);
-        setComponentAlignment(horizontalLayout,Alignment.TOP_CENTER);
+        setComponentAlignment(horizontalLayout, Alignment.TOP_CENTER);
 
     }
-
 
 
 }

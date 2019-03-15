@@ -22,49 +22,49 @@ public class RequestRepo {
     NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     //get request
-    public Request getRequest(int resourceid,String username, int incidentid) {
+    public Request getRequest(int technicianid, String username, int issueid) {
         Map<String, Object> params = new HashMap<String, Object>();
-        String sql="SELECT * FROM REQUEST WHERE resourceid = :resourceid AND username = :username AND incidentid = :incidentid";
-        String sql1="SELECT * FROM REQUEST WHERE resourceid = ? AND username = ? AND incidentid = ?";
+        String sql = "SELECT * FROM REQUEST WHERE technicianid = :technicianid AND username = :username AND issueid = :issueid";
+        String sql1 = "SELECT * FROM REQUEST WHERE technicianid = ? AND username = ? AND issueid = ?";
 
-        return jdbcTemplate.queryForObject(sql1, new Object[] {resourceid, username, incidentid},
+        return jdbcTemplate.queryForObject(sql1, new Object[]{technicianid, username, issueid},
                 new BeanPropertyRowMapper<>(Request.class));
 
     }
 
     //add new request
     public void insertRequest(Request request) {
-        String sql = "INSERT INTO request (username, resourceid, incidentid, returndate)" +
+        String sql = "INSERT INTO request (username, technicianid, issueid, returndate)" +
                 " VALUES (?,?,?,?)";
-        jdbcTemplate.update(sql,request.getUsername(),request.getResourceid(),
-                request.getIncidentid(),request.getReturndate());
+        jdbcTemplate.update(sql, request.getUsername(), request.gettechnicianid(),
+                request.getissueid(), request.getReturndate());
 
-    };
+    }
 
-    //reject resource request
-    public void deleteRequest(int resourceid) {
-        String sql = "DELETE FROM Request WHERE resourceid = ?";
-        jdbcTemplate.update(sql,resourceid);
+    //reject technician request
+    public void deleteRequest(int technicianid) {
+        String sql = "DELETE FROM Request WHERE technicianid = ?";
+        jdbcTemplate.update(sql, technicianid);
     }
 
     //deploy asset
-    public void deployResource(Request request,Date startdate) {
+    public void deploytechnician(Request request, Date startdate) {
         LocalDate now = LocalDate.now();
-        String sql = "INSERT INTO is_deployed_to(resourceid,incidentid, returndate,startdate,deployeddate)" +
-                " VALUES (?,?,?,?,?)" ;
-        jdbcTemplate.update(sql,request.getResourceid(),request.getIncidentid(),request.getReturndate(),startdate,now);
+        String sql = "INSERT INTO is_deployed_to(technicianid,issueid, returndate,startdate,deployeddate)" +
+                " VALUES (?,?,?,?,?)";
+        jdbcTemplate.update(sql, request.gettechnicianid(), request.getissueid(), request.getReturndate(), startdate, now);
     }
 
-    //return resource
-    public void returnResource(int resourceid){
-        String sql = "DELETE FROM IS_DEPLOYED_TO WHERE RESOURCEID =?";
-        jdbcTemplate.update(sql,resourceid);
+    //return technician
+    public void returntechnician(int technicianid) {
+        String sql = "DELETE FROM IS_DEPLOYED_TO WHERE technicianID =?";
+        jdbcTemplate.update(sql, technicianid);
     }
 
     // cancel request
     public void cancelRequest(Request request) {
-        String sql = "DELETE FROM Request WHERE resourceid = ? and username = ?";
-        jdbcTemplate.update(sql,request.getResourceid(),request.getUsername());
+        String sql = "DELETE FROM Request WHERE technicianid = ? and username = ?";
+        jdbcTemplate.update(sql, request.gettechnicianid(), request.getUsername());
     }
 
 }

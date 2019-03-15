@@ -1,22 +1,24 @@
 package com.resolutionITS.application.entities;
 
-public class TestClass extends Resource {
-    //this is a custom class for search resource
+public class TestClass extends technician {
+    //this is a custom class for search technician
     String unit;
     double value;
-    Resource resource;
+    technician technician;
 
-    public TestClass() {}
+    public TestClass() {
+    }
 
-    public TestClass(Resource resource, String unit, double value) {
-        this.resource = resource;
+    public TestClass(technician technician, String unit, double value) {
+        this.technician = technician;
         this.unit = unit;
         this.value = value;
     }
 
-    public Resource getResource() {
-        return resource;
+    public technician getTechnician() {
+        return technician;
     }
+
     public String getUnit() {
         return unit;
     }

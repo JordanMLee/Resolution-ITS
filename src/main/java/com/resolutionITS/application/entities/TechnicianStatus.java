@@ -2,20 +2,21 @@ package com.resolutionITS.application.entities;
 
 import java.sql.Date;
 
-public class ResourceStatus {
-    private int resourceid;
-    private String resourcename;
+public class TechnicianStatus {
+    private int technicianid;
+    private String technicianname;
     private String incidentDescription;
     private String owner;
     private Date returndate;
     private Date startdate;
 
-    public ResourceStatus() {}
+    public TechnicianStatus() {
+    }
 
-    public ResourceStatus(int resourceid, String resourcename, String incidentDescription,
-                          String owner, Date returndate, Date startdate) {
-        this.resourceid = resourceid;
-        this.resourcename = resourcename;
+    public TechnicianStatus(int technicianid, String technicianname, String incidentDescription,
+                            String owner, Date returndate, Date startdate) {
+        this.technicianid = technicianid;
+        this.technicianname = technicianname;
         this.incidentDescription = incidentDescription;
         this.owner = owner;
         this.startdate = startdate;
@@ -23,10 +24,10 @@ public class ResourceStatus {
 
     }
 
-    public ResourceStatus(int resourceid, String resourcename, String incidentDescription,
-                          String owner, Date returndate) {
-        this.resourceid = resourceid;
-        this.resourcename = resourcename;
+    public TechnicianStatus(int technicianid, String technicianname, String incidentDescription,
+                            String owner, Date returndate) {
+        this.technicianid = technicianid;
+        this.technicianname = technicianname;
         this.incidentDescription = incidentDescription;
         this.owner = owner;
 
@@ -34,20 +35,20 @@ public class ResourceStatus {
 
     }
 
-    public int getResourceid() {
-        return resourceid;
+    public int gettechnicianid() {
+        return technicianid;
     }
 
-    public void setResourceid(int resourceid) {
-        this.resourceid = resourceid;
+    public void settechnicianid(int technicianid) {
+        this.technicianid = technicianid;
     }
 
-    public String getResourcename() {
-        return resourcename;
+    public String gettechnicianname() {
+        return technicianname;
     }
 
-    public void setResourcename(String resourcename) {
-        this.resourcename = resourcename;
+    public void settechnicianname(String technicianname) {
+        this.technicianname = technicianname;
     }
 
     public String getIncidentDescription() {

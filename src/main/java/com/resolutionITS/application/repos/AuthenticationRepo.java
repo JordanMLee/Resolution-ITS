@@ -1,6 +1,9 @@
 package com.resolutionITS.application.repos;
 
-import com.resolutionITS.application.entities.*;
+import com.resolutionITS.application.entities.Tier1;
+import com.resolutionITS.application.entities.Tier2;
+import com.resolutionITS.application.entities.Tier3;
+import com.resolutionITS.application.entities.Users;
 import com.vaadin.spring.annotation.SpringComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -12,10 +15,9 @@ import javax.sql.DataSource;
 public class AuthenticationRepo {
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    @Autowired
     DataSource dataSource;
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     /*
     public String userAuth(String username) {
@@ -28,48 +30,40 @@ public class AuthenticationRepo {
     /* Used to display User's information at login */
     public Users findUserByUsername(String username) {
 
-        String sql = "SELECT * FROM Users WHERE username = ?";
+        String sql = "SELECT * FROM users WHERE username = ?";
 
         return jdbcTemplate.queryForObject(
-                sql, new Object[] { username },
+                sql, new Object[]{username},
                 new BeanPropertyRowMapper<>(Users.class));
     }
 
-    public Company findCompany(String username) {
+    public Tier1 findtier1(String username) {
 
-        String sql = "SELECT * FROM Company WHERE username = ?";
+        String sql = "SELECT * FROM tier1 WHERE username = ?";
         return jdbcTemplate.queryForObject(
-                sql, new Object[] {username},
-                new BeanPropertyRowMapper<>(Company.class));
+                sql, new Object[]{username},
+                new BeanPropertyRowMapper<>(Tier1.class));
 
     }
 
-    public Municipality findMunicipality(String username) {
-        String sql = "SELECT * FROM municipality WHERE username = ?";
-        return  jdbcTemplate.queryForObject(
-                sql, new Object[] {username},
-                new BeanPropertyRowMapper<>(Municipality.class)
+    public Tier2 findtier2(String username) {
+        String sql = "SELECT * FROM tier2 WHERE username = ?";
+        return jdbcTemplate.queryForObject(
+                sql, new Object[]{username},
+                new BeanPropertyRowMapper<>(Tier2.class)
         );
 
 
     }
 
-    public GovtImpl findGovt(String username) {
+    public Tier3 findGovt(String username) {
         String sql = "SELECT * FROM Govt WHERE username = ?";
         return jdbcTemplate.queryForObject(
-                sql, new Object[] {username},
-                new BeanPropertyRowMapper<>(GovtImpl.class)
+                sql, new Object[]{username},
+                new BeanPropertyRowMapper<>(Tier3.class)
         );
 
     }
-
-
-
-
-
-
-
-
 
 
 }

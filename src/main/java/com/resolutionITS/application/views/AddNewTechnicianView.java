@@ -1,12 +1,12 @@
 package com.resolutionITS.application.views;
 
-import com.resolutionITS.application.entities.Cost;
-import com.resolutionITS.application.entities.ESF;
-import com.resolutionITS.application.entities.Resource;
+import com.resolutionITS.application.entities.Skill;
+import com.resolutionITS.application.entities.Time;
+import com.resolutionITS.application.entities.technician;
 import com.resolutionITS.application.repos.CapabilitiesRepo;
-import com.resolutionITS.application.repos.CostRepo;
-import com.resolutionITS.application.repos.ESFrepo;
-import com.resolutionITS.application.repos.ResourceRepo;
+import com.resolutionITS.application.repos.Skillrepo;
+import com.resolutionITS.application.repos.TechnicianRepo;
+import com.resolutionITS.application.repos.TimeRepo;
 import com.vaadin.navigator.View;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.*;
@@ -17,29 +17,26 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-@SpringView(name=AddNewResourceView.VIEW)
-public class AddNewResourceView extends VerticalLayout implements View {
-    public static final String VIEW = "AddNewResource";
-
-    @Autowired
-    private ResourceRepo resourceRepo;
-    @Autowired
-    private ESFrepo esfRepo;
-    @Autowired
-    private CostRepo costRepo;
-    @Autowired
-    private CapabilitiesRepo capabilitiesRepo;
-
-    // Resource to be added
-    Resource resource = new Resource();
-
+@SpringView(name = AddNewTechnicianView.VIEW)
+public class AddNewTechnicianView extends VerticalLayout implements View {
+    public static final String VIEW = "AddNewtechnician";
+    // technician to be added
+    technician technician = new technician();
     // Input fields
     HorizontalLayout horizontalLayout;
+    @Autowired
+    private TechnicianRepo technicianRepo;
+    @Autowired
+    private Skillrepo skillRepo;
+    @Autowired
+    private TimeRepo timeRepo;
+    @Autowired
+    private CapabilitiesRepo capabilitiesRepo;
     private TextField owner_txt;
-    private TextField resourceName_txt;
-    private NativeSelect<ESF> primaryEsfSelect;
+    private TextField technicianName_txt;
+    private NativeSelect<Skill> primaryskillSelect;
     private TextArea capabilitiesTextArea;
-    private ListSelect<ESF> additionalESFSelectList;
+    private ListSelect<Skill> additionalskillSelectList;
     private TextField model_txt;
     private TextField lat_txt;
     private TextField long_txt;
@@ -52,10 +49,18 @@ public class AddNewResourceView extends VerticalLayout implements View {
     private Label confLabel;
 
 
+    public AddNewTechnicianView() {
+
+        mainMenuBtn = new Button("Main Menu");
+        clearFieldsBtn = new Button("Clear fields");
+        saveBtn = new Button("Save");
+        horizontalLayout = new HorizontalLayout();
+    }
+
     @PostConstruct
     void init() {
         // GUI
-        addComponent(new Label("Add A New Resource"));
+        addComponent(new Label("Add A New technician"));
 
         // success label
         confLabel = new Label();
@@ -67,21 +72,21 @@ public class AddNewResourceView extends VerticalLayout implements View {
         owner_txt.setReadOnly(true);
         owner_txt.setEnabled(false);
 
-        // Resource name
-        resourceName_txt= new TextField("Resource Name");
-        resourceName_txt.setRequiredIndicatorVisible(true);
+        // technician name
+        technicianName_txt = new TextField("technician Name");
+        technicianName_txt.setRequiredIndicatorVisible(true);
 
-        // Primary ESF
-        primaryEsfSelect = new NativeSelect("Primary ESF");
-        primaryEsfSelect.setEmptySelectionAllowed(false);
-        primaryEsfSelect.setRequiredIndicatorVisible(true);
-        primaryEsfSelect.setItems(esfRepo.findAll());
+        // Primary Skill
+        primaryskillSelect = new NativeSelect("Primary Skill");
+        primaryskillSelect.setEmptySelectionAllowed(false);
+        primaryskillSelect.setRequiredIndicatorVisible(true);
+        primaryskillSelect.setItems(skillRepo.findAll());
 
 
-        // Additional ESF (optional)
-        additionalESFSelectList = new ListSelect<>("Additional ESFs [Optional]");
-        additionalESFSelectList.setItems(esfRepo.findAll());
-        additionalESFSelectList.setRows(4);
+        // Additional Skill (optional)
+        additionalskillSelectList = new ListSelect<>("Additional skills [Optional]");
+        additionalskillSelectList.setItems(skillRepo.findAll());
+        additionalskillSelectList.setRows(4);
 
         // Model (optional)
         model_txt = new TextField("Model [Optional]");
@@ -97,10 +102,10 @@ public class AddNewResourceView extends VerticalLayout implements View {
         // Capabilities (optional)
         capabilitiesTextArea = new TextArea("Capabilities [Optional]");
 
-        // Cost
-        costTxt = new TextField("Cost");
+        // Time
+        costTxt = new TextField("Time");
 
-        // Cost per
+        // Time per
         NativeSelect<String> perCost = new NativeSelect<>("per Unit");
         perCost.setItems("", "Hour", "Day", "Week");
 
@@ -109,56 +114,56 @@ public class AddNewResourceView extends VerticalLayout implements View {
             if (isValidInput()) {
                 owner_txt.setValue(getSession().getAttribute("user").toString());
                 Notification.show(getSession().getAttribute("user").toString());
-                resource.setUsername(getSession().getAttribute("user").toString());
-                resource.setResourcename(resourceName_txt.getValue());
-                resource.setEsfid((short)primaryEsfSelect.getValue().getEsfid());
-                resource.setModel(model_txt.getValue());
-                resource.setLatitude(Float.parseFloat(lat_txt.getValue()));
-                resource.setLongitude(Float.parseFloat(long_txt.getValue()));
-                resource.setMaxdist(maxdist_txt.isEmpty() ? 0 : Short.parseShort(maxdist_txt.getValue()));
-                Cost cost = new Cost(perCost.getValue(), Double.valueOf(costTxt.getValue()));
+                technician.setUsername(getSession().getAttribute("user").toString());
+                technician.settechnicianname(technicianName_txt.getValue());
+                technician.setskillid((short) primaryskillSelect.getValue().getskillid());
+                technician.setModel(model_txt.getValue());
+                technician.setLatitude(Float.parseFloat(lat_txt.getValue()));
+                technician.setLongitude(Float.parseFloat(long_txt.getValue()));
+                technician.setMaxdist(maxdist_txt.isEmpty() ? 0 : Short.parseShort(maxdist_txt.getValue()));
+                Time time = new Time(perCost.getValue(), Double.valueOf(costTxt.getValue()));
 
 
-                int resourceid = 0;
+                int technicianid = 0;
                 int costid = 0;
 
                 // DB Inserts
                 try {
-                    costid = costRepo.insertCost(cost);
+                    costid = timeRepo.insertTime(time);
                     confLabel.setValue(confLabel.getValue() + "================ COST ID ============= " + costid);
                 } catch (SQLException e) {
                     confLabel.setValue(confLabel.getValue() + e.getMessage());
                     e.printStackTrace();
                 }
-                cost.setCostid(costid);
-                resource.setCost(cost);
+                time.setCostid(costid);
+                technician.setTime(time);
                 try {
-                    resourceid = resourceRepo.insertResource(resource);
+                    technicianid = technicianRepo.inserttechnician(technician);
                 } catch (SQLException e) {
                     confLabel.setValue(confLabel.getValue() + e.getMessage());
                     e.printStackTrace();
                 }
 
-                if (resourceid > 0) {
-                    confLabel.setValue(confLabel.getValue() + resource.toString() + " has been entered into springbootdb1");
-                    resource.setResourceid(resourceid);
+                if (technicianid > 0) {
+                    confLabel.setValue(confLabel.getValue() + technician.toString() + " has been entered into springbootdb1");
+                    technician.settechnicianid(technicianid);
                 } else {
-                    confLabel.setValue(confLabel.getValue() + "Error inserting resource to DB.");
+                    confLabel.setValue(confLabel.getValue() + "Error inserting technician to DB.");
                 }
 
-                // If has additional ESF;
-                if (resourceid > 0 && !additionalESFSelectList.getSelectedItems().isEmpty()) {
-                    // get resource ID
-                    for (ESF additionalESF : additionalESFSelectList.getSelectedItems()) {
-                        resourceRepo.insertHasESF(resource.getResourceid(), (short) additionalESF.getEsfid());
+                // If has additional Skill;
+                if (technicianid > 0 && !additionalskillSelectList.getSelectedItems().isEmpty()) {
+                    // get technician ID
+                    for (Skill additionalSkill : additionalskillSelectList.getSelectedItems()) {
+                        technicianRepo.insertHasskill(technician.gettechnicianid(), (short) additionalSkill.getskillid());
                     }
                 }
 
                 // If capabilities have been entered
                 List<String> capabilities = parseCapabilities(capabilitiesTextArea);
-                if (!capabilities.isEmpty()){
-                    resource.setCapabilites(capabilities);
-                    capabilitiesRepo.insertCapabilities(resource);
+                if (!capabilities.isEmpty()) {
+                    technician.setCapabilites(capabilities);
+                    capabilitiesRepo.insertCapabilities(technician);
                 }
             }
         });
@@ -173,30 +178,30 @@ public class AddNewResourceView extends VerticalLayout implements View {
 
         setWidthUndefined();
         owner_txt.setWidth("100%");
-        resourceName_txt.setWidth("100%");
-        primaryEsfSelect.setWidth("100%");
+        technicianName_txt.setWidth("100%");
+        primaryskillSelect.setWidth("100%");
         model_txt.setWidth("100%");
         costTxt.setWidth("100%");
         perCost.setWidth("100%");
         lat_txt.setWidth("100%");
         long_txt.setWidth("100%");
         maxdist_txt.setWidth("100%");
-        additionalESFSelectList.setWidth("100%");
+        additionalskillSelectList.setWidth("100%");
         capabilitiesTextArea.setWidth("100%");
-        horizontalLayout.addComponentsAndExpand(saveBtn,mainMenuBtn,clearFieldsBtn);
+        horizontalLayout.addComponentsAndExpand(saveBtn, mainMenuBtn, clearFieldsBtn);
         horizontalLayout.setWidth("100%");
 
 
         addComponent(owner_txt);
-        addComponent(resourceName_txt);
-        addComponent(primaryEsfSelect);
+        addComponent(technicianName_txt);
+        addComponent(primaryskillSelect);
         addComponent(model_txt);
         addComponent(costTxt);
         addComponent(perCost);
         addComponent(lat_txt);
         addComponent(long_txt);
         addComponent(maxdist_txt);
-        addComponent(additionalESFSelectList);
+        addComponent(additionalskillSelectList);
         addComponent(capabilitiesTextArea);
         addComponent(confLabel);
         addComponent(horizontalLayout);
@@ -206,34 +211,31 @@ public class AddNewResourceView extends VerticalLayout implements View {
     private boolean isValidInput() {
         boolean isValid = true;
 
-        if(resourceName_txt.isEmpty() || primaryEsfSelect.isEmpty() || costTxt.isEmpty() ||
+        if (technicianName_txt.isEmpty() || primaryskillSelect.isEmpty() || costTxt.isEmpty() ||
                 lat_txt.isEmpty() || long_txt.isEmpty()) {
             isValid = false;
-            confLabel.setValue(confLabel.getValue()+" Required field(s) is empty.");
+            confLabel.setValue(confLabel.getValue() + " Required field(s) is empty.");
         }
         if (!costTxt.isEmpty()) {
             try {
                 Double.valueOf(costTxt.getValue());
-            }
-            catch (Exception e){
-                confLabel.setValue(confLabel.getValue()+" Cost value must be numeric. Exception: " + e.getMessage());
+            } catch (Exception e) {
+                confLabel.setValue(confLabel.getValue() + " Time value must be numeric. Exception: " + e.getMessage());
                 isValid = false;
             }
         }
         if (!lat_txt.isEmpty()) {
             try {
                 Double.valueOf(lat_txt.getValue());
-            }
-            catch (Exception e){
-                confLabel.setValue(confLabel.getValue()+ " Latitude value must be numeric. Exception: " + e.getMessage());
+            } catch (Exception e) {
+                confLabel.setValue(confLabel.getValue() + " Latitude value must be numeric. Exception: " + e.getMessage());
                 isValid = false;
             }
         }
         if (!long_txt.isEmpty()) {
             try {
                 Double.valueOf(long_txt.getValue());
-            }
-            catch (Exception e){
+            } catch (Exception e) {
                 confLabel.setValue(confLabel.getValue() + " Longitude value must be numeric. Exception: " + e.getMessage());
                 isValid = false;
             }
@@ -252,14 +254,6 @@ public class AddNewResourceView extends VerticalLayout implements View {
             }
         }
         return returnParsed;
-    }
-
-    public AddNewResourceView() {
-
-        mainMenuBtn = new Button("Main Menu");
-        clearFieldsBtn = new Button("Clear fields");
-        saveBtn = new Button("Save");
-        horizontalLayout = new HorizontalLayout();
     }
 
 }

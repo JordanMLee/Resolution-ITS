@@ -1,21 +1,22 @@
 package com.resolutionITS.application.entities;
 
 
-public class Cost {
+public class Time {
 
     int costid;
     String unit;
     double value;
 
-    public Cost() {}
+    public Time() {
+    }
 
-    public Cost(String unit, double value) {
+    public Time(String unit, double value) {
         this.costid = costid;
         this.unit = unit;
         this.value = value;
     }
 
-    public Cost(int costid, String unit, double value) {
+    public Time(int costid, String unit, double value) {
         this.costid = costid;
         this.unit = unit;
         this.value = value;

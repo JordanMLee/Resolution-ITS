@@ -4,18 +4,19 @@ import java.sql.Date;
 
 public class Request {
     private String username;
-    private int resourceid;
-    private int incidentid;
+    private int technicianid;
+    private int issueid;
     private Date returndate;
 
-   public Request(){}
+    public Request() {
+    }
 
-   public Request(String username, int resourceid, int incidentid, Date returndate) {
-       this.username = username;
-       this.resourceid = resourceid;
-       this.incidentid = incidentid;
-       this.returndate = returndate;
-   }
+    public Request(String username, int technicianid, int issueid, Date returndate) {
+        this.username = username;
+        this.technicianid = technicianid;
+        this.issueid = issueid;
+        this.returndate = returndate;
+    }
 
     public String getUsername() {
         return username;
@@ -25,20 +26,20 @@ public class Request {
         this.username = username;
     }
 
-    public int getResourceid() {
-        return resourceid;
+    public int gettechnicianid() {
+        return technicianid;
     }
 
-    public void setResourceid(int resourceid) {
-        this.resourceid = resourceid;
+    public void settechnicianid(int technicianid) {
+        this.technicianid = technicianid;
     }
 
-    public int getIncidentid() {
-        return incidentid;
+    public int getissueid() {
+        return issueid;
     }
 
-    public void setIncidentid(int incidentid) {
-        this.incidentid = incidentid;
+    public void setissueid(int issueid) {
+        this.issueid = issueid;
     }
 
     public Date getReturndate() {
@@ -50,8 +51,8 @@ public class Request {
     }
 
     @Override
-    public String toString(){
-       return "Request From: " + username + " for resource: " + " to be used in incident " + incidentid;
+    public String toString() {
+        return "Request From: " + username + " for technician: " + " to be used in issue " + issueid;
 
     }
 }
