@@ -2,6 +2,7 @@ package com.resolutionITS.application;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 /**
  * Author: Jordan Lee
@@ -16,8 +17,21 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 
 @SpringBootApplication
+@EnableJpaRepositories
 public class Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
+
+
+    // demoing user add repo
+//    @Bean
+//    public CommandLineRunner demo (UserRepository repository) {
+//        return(args -> {
+//            repository.save(new Users2("Jacky"));
+//        });
+//    }
+
+
 }
+

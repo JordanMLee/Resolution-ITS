@@ -42,6 +42,8 @@ public class mainUI extends UI implements ViewDisplay {
         navigationBar.addComponent(navigationButton("Technician Status", TechnicianStatusView.VIEW));
         navigationBar.addComponent(navigationButton("Technician Report", TechnicianReportView.VIEW));
         navigationBar.addComponent(navigationButton("Logout", LoginView.VIEW));
+
+        navigationBar.addComponent(navigationButton("Add New User", AddNewUserView.VIEW));
         top.addComponents(navigationBar, currentUser);
         root.addComponent(top);
 
