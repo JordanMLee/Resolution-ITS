@@ -576,7 +576,7 @@ CREATE TABLE public.users
   name     character varying(30) NOT NULL,
   username character varying(30) NOT NULL,
   password character varying(30) NOT NULL,
-  usertype public.usertype       NOT NULL
+  id integer
 );
 
 
