@@ -26,11 +26,14 @@ Ensure Apache Maven is installed:
 
 Setup PostgreSQL database
 Import database schema and seed data from main folder
-psql Resolution-ITS < ResolutionITS_DB.pqsql
+copy ResolutionITS_DB.pqsql to /tmp 
+log into Postgres
+##### createdb Resolution-ITS
+##### psql Resolution-ITS < ResolutionITS_DB.pqsql
 
 Run application
-mvn springboot-run 
+##### mvn springboot-run 
 
-navigate to localhost:8080
+navigate to ##### localhost:8080
 
 Or run this jar file
