@@ -64,6 +64,7 @@ public class SearchForTechnicians extends VerticalLayout implements View {
         // GUI
         //VaadinSession.getCurrent().getAttribute("user")
         addComponent(new Label("Search technician"));
+
         confLabel = new Label();
         addComponent(confLabel);
 

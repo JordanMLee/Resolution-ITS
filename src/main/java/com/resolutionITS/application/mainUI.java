@@ -22,6 +22,8 @@ public class mainUI extends UI implements ViewDisplay {
     public Label currentUser = new Label("");
     private Panel springViewDisplay;
 
+    private VerticalLayout layout;
+
     @Override
     protected void init(VaadinRequest vaadinRequest) {
 
@@ -41,9 +43,8 @@ public class mainUI extends UI implements ViewDisplay {
         navigationBar.addComponent(navigationButton("Search for Technicians", SearchForTechnicians.VIEW));
         navigationBar.addComponent(navigationButton("Technician Status", TechnicianStatusView.VIEW));
         navigationBar.addComponent(navigationButton("Technician Report", TechnicianReportView.VIEW));
-        navigationBar.addComponent(navigationButton("Logout", LoginView.VIEW));
-
         navigationBar.addComponent(navigationButton("Add New User", AddNewUserView.VIEW));
+        navigationBar.addComponent(navigationButton("Logout", LoginView.VIEW));
         top.addComponents(navigationBar, currentUser);
         root.addComponent(top);
 
@@ -52,9 +53,17 @@ public class mainUI extends UI implements ViewDisplay {
 
         springViewDisplay = new Panel();
         springViewDisplay.setSizeFull();
+
         root.addComponent(springViewDisplay);
+
 //        root.setExpandRatio(springViewDisplay, 1.0f);
-        root.setComponentAlignment(springViewDisplay, Alignment.TOP_CENTER);
+        root.setComponentAlignment(springViewDisplay, Alignment.MIDDLE_CENTER);
+
+        //testing vertical layout
+//        layout = new VerticalLayout();
+//        root.addComponent(layout);
+//        root.setComponentAlignment(layout,Alignment.TOP_CENTER);
+
 
 
     }
@@ -68,7 +77,13 @@ public class mainUI extends UI implements ViewDisplay {
 
     @Override
     public void showView(View view) {
+//        layout.addComponent((Component) view);
+//        layout.setComponentAlignment((Component)view, Alignment.TOP_CENTER);
+
+
         springViewDisplay.setContent((Component) view);
+//        springViewDisplay.setVisible(false);
+
     }
 
 
