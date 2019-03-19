@@ -2,11 +2,14 @@ package com.resolutionITS.application.views;
 
 import com.resolutionITS.application.entities.Issue;
 import com.resolutionITS.application.entities.Issue_declaration;
+import com.resolutionITS.application.experimental.nlp;
 import com.resolutionITS.application.repos.IssueRepo;
 import com.resolutionITS.application.repos.Issue_declarationRepo;
+import com.vaadin.event.dd.acceptcriteria.Not;
 import com.vaadin.navigator.View;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.*;
+import opennlp.tools.parser.Parse;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
@@ -36,6 +39,10 @@ public class AddNewIssueView extends VerticalLayout implements View {
     private int uniqid;
     private String decl;
     private HorizontalLayout horizontalLayout = new HorizontalLayout();
+
+    //NLP experimental
+    private nlp nlp1;
+    //
 
     private Dictionary declTypes = new Dictionary() {
         public int size() {
@@ -72,6 +79,14 @@ public class AddNewIssueView extends VerticalLayout implements View {
 
     @PostConstruct
     void init() {
+
+        //nlp
+        try {
+            nlp1 = new nlp();
+        } catch (Exception e) {
+            Notification.show(e.toString());
+        }
+
         confLabel = new Label();
         // declaration
         declaration = new NativeSelect<>("Issue Type");
@@ -132,7 +147,18 @@ public class AddNewIssueView extends VerticalLayout implements View {
                     && (issue.getLongitude() < 180 && issue.getLongitude() > -180)) {
 
                 issue.setUsername(getSession().getAttribute("user").toString());
+
+
                 issue.setDescription(descriptionTxt.getValue());
+                //nlp
+                Parse[] parses = nlp1.parseText(descriptionTxt.getValue());
+                for (Parse p : parses){
+                    Notification.show(p.toString());
+                }
+
+
+
+
                 issue.setissuedate(java.sql.Date.valueOf(dateField.getValue()));
                 issueID = issueRepo.selectissueID() + 1;
                 issue.setissueid(issueID);
