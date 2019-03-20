@@ -33,4 +33,4 @@ mvn springboot-run
 
 navigate to localhost:8080
 
-Or run this jar file
+Or run loadDB.sh

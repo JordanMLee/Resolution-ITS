@@ -11,4 +11,4 @@ read dbuser
 
 createdb -h localhost -p 5432 -U $dbuser $dbname
 
-psql -U $dbuser $dbname < "./src/main/resources/ResolutionITS_DB.pqsql"
+psql -U $dbuser $dbname < "./src/main/resources/ResolutionITS_export.pgsql"
