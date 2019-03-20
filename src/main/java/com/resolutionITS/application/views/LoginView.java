@@ -57,6 +57,8 @@ public class LoginView extends VerticalLayout implements View {
         error.setVisible(false);
         addComponent(error);
         addComponent(welcomeLabel);
+        username.setValue("username");
+        password.setValue("password");
 
         // the following implements login authentication with database
         // if the username is found but the password is incorrect, then
