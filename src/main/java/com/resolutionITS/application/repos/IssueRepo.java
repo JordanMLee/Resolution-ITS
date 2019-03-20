@@ -15,10 +15,9 @@ public class IssueRepo {
 
     public void insert(Issue issue) {
         jdbcTemplate.update("INSERT INTO issue (username, uniqid, issueid, " +
-                        "issuedate, description, latitude, longitude) VALUES (?,?,?,?,?,?,?)",
+                        "issuedate, description) VALUES (?,?,?,?,?)",
                 issue.getUsername(), issue.getUniqid(), issue.getissueid(),
-                issue.getissuedate(), issue.getDescription(), issue.getLatitude(),
-                issue.getLongitude());
+                issue.getissuedate(), issue.getDescription());
 
     }
 
@@ -27,8 +26,7 @@ public class IssueRepo {
         return jdbcTemplate.query("SELECT * FROM issue",
                 (rs, rowNum) -> new Issue(rs.getString("username"), rs.getInt("uniqid"),
                         rs.getInt("issueid"), rs.getDate("issuedate"),
-                        rs.getString("description"), rs.getFloat("latitude"),
-                        rs.getFloat("longitude")));
+                        rs.getString("description")));
     }
 
     public Integer selectissueID() {

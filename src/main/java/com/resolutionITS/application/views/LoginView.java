@@ -13,6 +13,7 @@ import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 import javax.annotation.PostConstruct;
 
@@ -65,50 +66,52 @@ public class LoginView extends VerticalLayout implements View {
         login.addClickListener((Button.ClickListener) clickEvent -> {
 
             if (!username.isEmpty()) {
-//                try {
+                try {
 
                     user = authenticationRepo.findUserByUsername(username.getValue());
                     if (user.getPassword().equals(password.getValue())) {
 
                         VaadinSession.getCurrent().setAttribute("user", user.getUsername());
+                        Notification.show("Welcome : " + getSession().getAttribute("user").toString());
+                        getUI().getNavigator().navigateTo(SearchForTechnicians.VIEW);
 
 //                        Notification.show(getSession().getAttribute("user").toString());
 
                         // switch changes welcome banner based on usertype (Table Users)
-                        switch (user.getUsertype()) {
-
-                            case "user":
-//                                    welcomeLabel.setValue("Welcome : " + user.getName());
-                                // load seSearchForTechnicians
-                                Notification.show("Welcome : " + getSession().getAttribute("user").toString());
-                                getUI().getNavigator().navigateTo(SearchForTechnicians.VIEW);
-                                break;
-                            case "tier1":
-                                tier1 = authenticationRepo.findtier1(username.getValue());
-                                welcomeLabel.setValue("Welcome: " + user.getName() +
-                                        " [Headquarters: " + tier1.getHq() + " | Employees: "
-                                        + tier1.getEmployeecnt() + " ]");
-                                break;
-                            case "tier2":
-                                tier2 = authenticationRepo.findtier2(username.getValue());
-                                welcomeLabel.setValue("Welcome: " + user.getName() +
-                                        " [Category: " + tier2.getCategory() + " ]");
-                                break;
-                            case "tier3":
-                                govt = authenticationRepo.findGovt(username.getValue());
-                                welcomeLabel.setValue("Welcome: " + user.getName() +
-                                        "[Agency Office: " + govt.getAgencyoffice() + " ]");
-                                break;
-
-                        }
+//                        switch (user.getUsertype()) {
+//
+//                            case "user":
+////                                    welcomeLabel.setValue("Welcome : " + user.getName());
+//                                // load seSearchForTechnicians
+//                                Notification.show("Welcome : " + getSession().getAttribute("user").toString());
+//                                getUI().getNavigator().navigateTo(SearchForTechnicians.VIEW);
+//                                break;
+//                            case "tier1":
+//                                tier1 = authenticationRepo.findtier1(username.getValue());
+//                                welcomeLabel.setValue("Welcome: " + user.getName() +
+//                                        " [Headquarters: " + tier1.getHq() + " | Employees: "
+//                                        + tier1.getEmployeecnt() + " ]");
+//                                break;
+//                            case "tier2":
+//                                tier2 = authenticationRepo.findtier2(username.getValue());
+//                                welcomeLabel.setValue("Welcome: " + user.getName() +
+//                                        " [Category: " + tier2.getCategory() + " ]");
+//                                break;
+//                            case "tier3":
+//                                govt = authenticationRepo.findGovt(username.getValue());
+//                                welcomeLabel.setValue("Welcome: " + user.getName() +
+//                                        "[Agency Office: " + govt.getAgencyoffice() + " ]");
+//                                break;
+//
+//                        }
                     } else {
                         //getViewComponent().setVisible(false);
                         welcomeLabel.setValue("Did you forget your password?");
                     }
-//                } catch (EmptyResultDataAccessException e) {
-//                    System.out.println("The username and password were not found in the database\n");
-//                    welcomeLabel.setValue("ACCESS DENIED");
-//                }
+                } catch (EmptyResultDataAccessException e) {
+                    System.out.println("The username and password were not found in the database\n");
+                    welcomeLabel.setValue("ACCESS DENIED");
+                }
             }
         }); // end click listener
     }

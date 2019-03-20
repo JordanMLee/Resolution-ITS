@@ -118,8 +118,7 @@ public class AddNewTechnicianView extends VerticalLayout implements View {
                 technician.settechnicianname(technicianName_txt.getValue());
                 technician.setskillid((short) primaryskillSelect.getValue().getskillid());
                 technician.setModel(model_txt.getValue());
-                technician.setLatitude(Float.parseFloat(lat_txt.getValue()));
-                technician.setLongitude(Float.parseFloat(long_txt.getValue()));
+
                 technician.setMaxdist(maxdist_txt.isEmpty() ? 0 : Short.parseShort(maxdist_txt.getValue()));
                 Time time = new Time(perCost.getValue(), Double.valueOf(costTxt.getValue()));
 

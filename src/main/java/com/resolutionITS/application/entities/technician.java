@@ -10,8 +10,7 @@ public class technician {
     String technicianname;
     short skillid;
     String model;
-    float latitude;
-    float longitude;
+
     short maxdist;
 
     List<String> capabilites;
@@ -31,14 +30,13 @@ public class technician {
         this.technicianid = technicianid;
     }
 
-    public technician(int technicianid, String username, String technicianname, short skillid, String model, float latitude, float longitude, short maxdist, List<String> capabilites) {
+    public technician(int technicianid, String username, String technicianname, short skillid, String model, short maxdist, List<String> capabilites) {
         this.technicianid = technicianid;
         this.username = username;
         this.technicianname = technicianname;
         this.skillid = skillid;
         this.model = model;
-        this.latitude = latitude;
-        this.longitude = longitude;
+
         this.maxdist = maxdist;
         this.capabilites = capabilites;
     }
@@ -85,14 +83,13 @@ public class technician {
 
     }
 
-    public technician(int technicianid, String username, String technicianname, short skillid, String model, float latitude, float longitude, short maxdist, List<String> capabilites, Time time, int value, String unit, Boolean in_use, Date returndate, Date startdate, String description) {
+    public technician(int technicianid, String username, String technicianname, short skillid, String model, short maxdist, List<String> capabilites, Time time, int value, String unit, Boolean in_use, Date returndate, Date startdate, String description) {
         this.technicianid = technicianid;
         this.username = username;
         this.technicianname = technicianname;
         this.skillid = skillid;
         this.model = model;
-        this.latitude = latitude;
-        this.longitude = longitude;
+
         this.maxdist = maxdist;
         this.capabilites = capabilites;
         this.time = time;
@@ -144,21 +141,7 @@ public class technician {
         this.model = model;
     }
 
-    public float getLatitude() {
-        return latitude;
-    }
 
-    public void setLatitude(float latitude) {
-        this.latitude = latitude;
-    }
-
-    public float getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(float longitude) {
-        this.longitude = longitude;
-    }
 
     public short getMaxdist() {
         return maxdist;
@@ -201,7 +184,7 @@ public class technician {
     @Override
     public String toString() {
         return "technician [technician id=" + technicianid + ", owner=" + username + ", technician name=" + technicianname +
-                ", skill id=" + skillid + ", model=" + model + ", latitude=" + latitude + ", longitude=" + longitude +
+                ", skill id=" + skillid + ", model=" + model +
                 ", maxdist=" + maxdist + "]";
     }
 

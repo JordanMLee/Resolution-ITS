@@ -30,18 +30,32 @@ COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
 
 --
--- Name: types; Type: TYPE; Schema: public; Owner: postgres
+-- Name: declarations; Type: TYPE; Schema: public; Owner: postgres
 --
 
-CREATE TYPE public.types AS ENUM (
-  'SW',
-  'WS',
-  'PR',
-  'NT'
+CREATE TYPE public.declarations AS ENUM (
+  'MD',
+  'EM',
+  'FM',
+  'FS'
   );
 
 
-ALTER TYPE public.types OWNER TO postgres;
+ALTER TYPE public.declarations OWNER TO postgres;
+
+--
+-- Name: municategory; Type: TYPE; Schema: public; Owner: postgres
+--
+
+CREATE TYPE public.municategory AS ENUM (
+  'city',
+  'county',
+  'state',
+  'country'
+  );
+
+
+ALTER TYPE public.municategory OWNER TO postgres;
 
 --
 -- Name: usertype; Type: TYPE; Schema: public; Owner: postgres
@@ -105,7 +119,8 @@ ALTER SEQUENCE public.capability_technicianid_seq OWNED BY public.capability.tec
 CREATE TABLE public.tier1
 (
   username    character varying(30) NOT NULL,
-
+  hq          character varying(30) NOT NULL,
+  employeecnt integer               NOT NULL
 );
 
 
@@ -171,7 +186,7 @@ ALTER TABLE public.skill
 CREATE TABLE public.tier3
 (
   username     character varying(30) NOT NULL,
-
+  agencyoffice character varying(40)
 );
 
 
@@ -262,8 +277,9 @@ CREATE TABLE public.issue
   uniqid      integer               NOT NULL,
   issueid     integer               NOT NULL,
   issuedate   date                  NOT NULL,
-  description character varying(100)
-
+  description character varying(100),
+  latitude    real                  NOT NULL,
+  longitude   real                  NOT NULL
 );
 
 
@@ -271,25 +287,25 @@ ALTER TABLE public.issue
   OWNER TO postgres;
 
 --
--- Name: issue_type; Type: TABLE; Schema: public; Owner: postgres
+-- Name: issue_declaration; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public.issue_type
+CREATE TABLE public.issue_declaration
 (
-  type        public.types,
+  declaration public.declarations,
   uniqid      integer NOT NULL,
   issueid     integer NOT NULL
 );
 
 
-ALTER TABLE public.issue_type
+ALTER TABLE public.issue_declaration
   OWNER TO postgres;
 
 --
--- Name: issue_type_issueid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: issue_declaration_issueid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-CREATE SEQUENCE public.issue_type_issueid_seq
+CREATE SEQUENCE public.issue_declaration_issueid_seq
   AS integer
   START WITH 1
   INCREMENT BY 1
@@ -298,21 +314,21 @@ CREATE SEQUENCE public.issue_type_issueid_seq
   CACHE 1;
 
 
-ALTER TABLE public.issue_type_issueid_seq
+ALTER TABLE public.issue_declaration_issueid_seq
   OWNER TO postgres;
 
 --
--- Name: issue_type_issueid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: issue_declaration_issueid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE public.issue_type_issueid_seq OWNED BY public.issue_type.issueid;
+ALTER SEQUENCE public.issue_declaration_issueid_seq OWNED BY public.issue_declaration.issueid;
 
 
 --
--- Name: issue_type_uniqid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: issue_declaration_uniqid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-CREATE SEQUENCE public.issue_type_uniqid_seq
+CREATE SEQUENCE public.issue_declaration_uniqid_seq
   AS integer
   START WITH 1
   INCREMENT BY 1
@@ -321,14 +337,14 @@ CREATE SEQUENCE public.issue_type_uniqid_seq
   CACHE 1;
 
 
-ALTER TABLE public.issue_type_uniqid_seq
+ALTER TABLE public.issue_declaration_uniqid_seq
   OWNER TO postgres;
 
 --
--- Name: issue_type_uniqid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: issue_declaration_uniqid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE public.issue_type_uniqid_seq OWNED BY public.issue_type.uniqid;
+ALTER SEQUENCE public.issue_declaration_uniqid_seq OWNED BY public.issue_declaration.uniqid;
 
 
 --
@@ -560,7 +576,7 @@ CREATE TABLE public.users
   name     character varying(30) NOT NULL,
   username character varying(30) NOT NULL,
   password character varying(30) NOT NULL,
-  id integer
+  id       integer
 );
 
 
@@ -616,19 +632,19 @@ ALTER TABLE ONLY public.issue
 
 
 --
--- Name: issue_type uniqid; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: issue_declaration uniqid; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.issue_type
-  ALTER COLUMN uniqid SET DEFAULT nextval('public.issue_type_uniqid_seq'::regclass);
+ALTER TABLE ONLY public.issue_declaration
+  ALTER COLUMN uniqid SET DEFAULT nextval('public.issue_declaration_uniqid_seq'::regclass);
 
 
 --
--- Name: issue_type issueid; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: issue_declaration issueid; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.issue_type
-  ALTER COLUMN issueid SET DEFAULT nextval('public.issue_type_issueid_seq'::regclass);
+ALTER TABLE ONLY public.issue_declaration
+  ALTER COLUMN issueid SET DEFAULT nextval('public.issue_declaration_issueid_seq'::regclass);
 
 
 --
@@ -676,7 +692,9 @@ COPY public.capability (technicianid, capability) FROM stdin;
 -- Data for Name: tier1; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-
+COPY public.tier1 (username, hq, employeecnt) FROM stdin;
+tyson1	denver	1000
+\.
 
 
 --
@@ -685,11 +703,11 @@ COPY public.capability (technicianid, capability) FROM stdin;
 
 COPY public.time (value, unit, timeid) FROM stdin;
 50.00	each	100
-20.00	each,	12
-30.00	each	13
-40.00	each	15
-40.00	Day	1
-40.00	Day	2
+2000.00	each,	12
+3000.00	each	13
+4000.00	each	15
+400.00	Day	1
+400.00	Day	2
 2.00	Hour	3
 12.00	Hour	4
 \.
@@ -700,21 +718,21 @@ COPY public.time (value, unit, timeid) FROM stdin;
 --
 
 COPY public.skill (skillid, skilldesc) FROM stdin;
-1	Troubleshooting
-2	Routers and Switches
-3	AWS Cloud Certified
-4	Database Engineer
-5	Tech Lead
-6	Probationary
-7	Researcher
-8	Configuration Guru
-9	Javascript
-10	Java
-11	Python
-12	Microservices
-13	Security
-14	Senior Technician
-15	Senior Manager
+1	Transportation
+2	Communications
+3	Public Works and Engineering
+4	Firefighting
+5	Emergency Management
+6	Mass Care, Emergency Assistance,Housing, and Human Services
+7	Logistics Management and technician Support
+8	Public Health and Medical Services
+9	Search and Rescue
+10	Oil and Hazardous Materials Response
+11	Agriculture and Natural technicians
+12	Energy
+13	Public Safety and Security
+14	Long-Term Community Recovery
+15	External Affairs
 \.
 
 
@@ -722,7 +740,9 @@ COPY public.skill (skillid, skilldesc) FROM stdin;
 -- Data for Name: tier3; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-
+COPY public.tier3 (username, agencyoffice) FROM stdin;
+cia	ciahq
+\.
 
 
 --
@@ -758,20 +778,20 @@ COPY public.has_skill (technicianid, skillid) FROM stdin;
 -- Data for Name: issue; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.issue (username, uniqid, issueid, issuedate, description) FROM stdin;
-jmlee	4	84487	2018-07-18	Network connection taking too long
-jmlee	1	0	2018-07-19	test data
-jmlee	687	67889	2018-07-22	no paper in printer
-jmlee	2	123	2018-07-18	computer keeps rebooting
+COPY public.issue (username, uniqid, issueid, issuedate, description, latitude, longitude) FROM stdin;
+jmlee	4	84487	2018-07-18	g	234	1324
+jmlee	1	0	2018-07-19	blh	123.123001	1232.21301
+jmlee	687	67889	2018-07-22	epic landslide	23.4566994	123.456703
+jmeanor	2	123	2018-07-18	fire	21.6399994	75.3399963
 \.
 
 
 --
--- Data for Name: issue_type; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: issue_declaration; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.issue_type (type, uniqid, issueid) FROM stdin;
-
+COPY public.issue_declaration (declaration, uniqid, issueid) FROM stdin;
+MD	4	4
 \.
 
 
@@ -797,6 +817,9 @@ COPY public.is_deployed_to (technicianid, issueid, returndate, startdate, deploy
 -- Data for Name: tier2; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
+COPY public.tier2 (username, category) FROM stdin;
+cityworks	city
+\.
 
 
 --
@@ -814,6 +837,15 @@ jmlee	123456	84487	2018-07-24
 -- Data for Name: technician; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
+COPY public.technician (technicianid, username, technicianname, skillid, model, latitude, longitude,
+                        maxdist) FROM stdin;
+123454	jmlee	truck	1	f-250	23.4673004	132.3423	24
+123455	jmlee	truck	2	f-250	23.4673004	132.3423	24
+123456	jmlee	truck	3	f-150	23.4673004	132.3423	24
+2	jmeanor	airplane	4		23.4566994	123.456703	12
+3	jmlee	er	2	wer	123	123	123
+4	jmlee	myNewtechnician	2	12	12	12	12
+\.
 
 
 --
@@ -821,9 +853,11 @@ jmlee	123456	84487	2018-07-24
 --
 
 COPY public.users (name, username, password, usertype) FROM stdin;
-jordan	jmlee	password
-
-
+jordan	jmlee	password	user
+tysons	tyson1	password	tier1
+city works	cityworks	password	tier2
+cia	cia	password	tier3
+john	jmeanor	password	user
 \.
 
 
@@ -856,17 +890,17 @@ SELECT pg_catalog.setval('public.has_skill_technicianid_seq', 1, false);
 
 
 --
--- Name: issue_type_issueid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: issue_declaration_issueid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.issue_type_issueid_seq', 4, true);
+SELECT pg_catalog.setval('public.issue_declaration_issueid_seq', 4, true);
 
 
 --
--- Name: issue_type_uniqid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: issue_declaration_uniqid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.issue_type_uniqid_seq', 4, true);
+SELECT pg_catalog.setval('public.issue_declaration_uniqid_seq', 4, true);
 
 
 --
@@ -960,11 +994,11 @@ ALTER TABLE ONLY public.has_skill
 
 
 --
--- Name: issue_type issue_type_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: issue_declaration issue_declaration_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.issue_type
-  ADD CONSTRAINT issue_type_pkey PRIMARY KEY (issueid, uniqid);
+ALTER TABLE ONLY public.issue_declaration
+  ADD CONSTRAINT issue_declaration_pkey PRIMARY KEY (issueid, uniqid);
 
 
 --
@@ -1064,11 +1098,11 @@ ALTER TABLE ONLY public.issue
 
 
 --
--- Name: issue_type fk_issuetype_uniqid_issue_uniqid; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: issue_declaration fk_issuedeclaration_uniqid_issue_uniqid; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.issue_type
-  ADD CONSTRAINT fk_issuetype_uniqid_issue_uniqid FOREIGN KEY (uniqid) REFERENCES public.issue (uniqid) ON DELETE CASCADE;
+ALTER TABLE ONLY public.issue_declaration
+  ADD CONSTRAINT fk_issuedeclaration_uniqid_issue_uniqid FOREIGN KEY (uniqid) REFERENCES public.issue (uniqid) ON DELETE CASCADE;
 
 
 --

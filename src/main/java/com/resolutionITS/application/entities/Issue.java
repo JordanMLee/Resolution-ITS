@@ -9,21 +9,19 @@ public class Issue {
     int issueid;
     Date issuedate;
     String description;
-    float latitude;
-    float longitude;
+
 
     public Issue() {
     }
 
     public Issue(String username, int uniqid, int issueid,
-                 Date issuedate, String description, float latitude, float longitude) {
+                 Date issuedate, String description) {
         this.username = username;
         this.uniqid = uniqid; //example 1234
         this.issueid = issueid; //example MD-[issueid]
         this.issuedate = issuedate;
         this.description = description;
-        this.latitude = latitude;
-        this.longitude = longitude;
+
     }
 
     public String getUsername() {
@@ -66,21 +64,6 @@ public class Issue {
         this.description = description;
     }
 
-    public float getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(float latitude) {
-        this.latitude = latitude;
-    }
-
-    public float getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(float longitude) {
-        this.longitude = longitude;
-    }
 
     @Override
     public String toString() {

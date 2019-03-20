@@ -1,9 +1,7 @@
 package com.resolutionITS.application.views;
 
 import com.resolutionITS.application.entities.Issue;
-import com.resolutionITS.application.entities.Issue_declaration;
 import com.resolutionITS.application.repos.IssueRepo;
-import com.resolutionITS.application.repos.Issue_declarationRepo;
 import com.vaadin.navigator.View;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.*;
@@ -13,6 +11,7 @@ import javax.annotation.PostConstruct;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 @SpringView(name = AddNewIssueView.VIEW)
 public class AddNewIssueView extends VerticalLayout implements View {
@@ -21,10 +20,10 @@ public class AddNewIssueView extends VerticalLayout implements View {
     Random randomID = new Random();
     @Autowired
     private IssueRepo issueRepo;
-    @Autowired
-    private Issue_declarationRepo issue_declarationRepo;
+    //    @Autowired
+//    private Issue_declarationRepo issue_declarationRepo;
     private Issue issue = new Issue();
-    private Issue_declaration issue_declaration = new Issue_declaration();
+    //    private Issue_declaration issue_declaration = new Issue_declaration();
     private int issueID; //
     private DateField dateField;
     private TextField latitudeTxt;
@@ -78,7 +77,7 @@ public class AddNewIssueView extends VerticalLayout implements View {
         declaration.setEmptySelectionAllowed(false);
         declaration.setRequiredIndicatorVisible(true);
 
-        declaration.setItems("MD", "EM", "FM", "FS");
+        declaration.setItems("Software", "Workstation", "Printer", "Network");
         declTypes.put("MD", "Major Disaster");
         declTypes.put("EM", "Emergency");
         declTypes.put("FM", "Fire Management Assistance");
@@ -128,38 +127,36 @@ public class AddNewIssueView extends VerticalLayout implements View {
             getUI().getNavigator().navigateTo("");
         }), new Button("Save", click -> {
 
-            if ((issue.getLatitude() < 90 && issue.getLatitude() > -90)
-                    && (issue.getLongitude() < 180 && issue.getLongitude() > -180)) {
 
-                issue.setUsername(getSession().getAttribute("user").toString());
-                issue.setDescription(descriptionTxt.getValue());
-                issue.setissuedate(java.sql.Date.valueOf(dateField.getValue()));
-                issueID = issueRepo.selectissueID() + 1;
-                issue.setissueid(issueID);
+            issue.setUsername(getSession().getAttribute("user").toString());
+            issue.setDescription(descriptionTxt.getValue());
+            issue.setissuedate(java.sql.Date.valueOf(dateField.getValue()));
+            issueID = issueRepo.selectissueID() + 1;
+            issue.setissueid(issueID);
 
-                decl = declaration.getValue(); //String
-                //issue_declarationRepo takes in a String, typecast to Declarations,
-                // returns a String and then converts to integer and back to String before
-                //being stored.
+            decl = declaration.getValue(); //String
+            //issue_declarationRepo takes in a String, typecast to Declarations,
+            // returns a String and then converts to integer and back to String before
+            //being stored.
 
 
 //                uniqid = decl + "-" + String.valueOf( Integer.parseInt(issue_declarationRepo.selectuniqID(decl).replaceAll("[^0-9]","")) + 1 );
-                uniqid = Integer.parseInt(issue_declarationRepo.selectuniqID(decl).replaceAll("[^0-9]", ""));
 
-                issue.setUniqid(uniqid);
-                issue.setLatitude(Float.valueOf(latitudeTxt.getValue()));
-                issue.setLongitude(Float.valueOf(longitudeTxt.getValue()));
+// nextInt is normally exclusive of the top value,
+// so add 1 to make it inclusive
+            int randomNum = ThreadLocalRandom.current().nextInt(1000, 9999);
+//            uniqid = Integer.parseInt(issue_declarationRepo.selectuniqID(decl).replaceAll("[^0-9]", ""));
 
-                issueRepo.insert(issue);
+            issue.setUniqid(randomNum);
 
-                issue_declaration.setDeclaration(decl);
-                issue_declaration.setUniqid(uniqid);
-                issue_declaration.setissueid(issueID);
-                issue_declarationRepo.insert(issue_declaration);
-                confLabel.setValue(issue.toString() + " added to springbootdb1");
-            } else {
-                Notification.show("Invalid location, please use xx.xxxx or xxx.xxxx format");
-            }
+            issueRepo.insert(issue);
+
+//            issue_declaration.setDeclaration(decl);
+//            issue_declaration.setUniqid(uniqid);
+//            issue_declaration.setissueid(issueID);
+//            issue_declarationRepo.insert(issue_declaration);
+            confLabel.setValue(issue.toString() + " added to database");
+
 
         }));
 

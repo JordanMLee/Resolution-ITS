@@ -40,17 +40,16 @@ public class TechnicianRepo {
         Connection connection = dataSource.getConnection();
 
         String sql = "INSERT INTO technician " +
-                "(technicianid, username, technicianname, skillid, model, latitude, longitude, maxdist) " +
-                "VALUES (DEFAULT, ?,?,?,?,?,?,?) RETURNING technicianid; ";
+                "(technicianid, username, technicianname, skillid, model, maxdist) " +
+                "VALUES (DEFAULT, ?,?,?,?,?) RETURNING technicianid; ";
         PreparedStatement stmt = connection.prepareStatement(sql);
 
         stmt.setObject(1, technician.getUsername());
         stmt.setObject(2, technician.gettechnicianname());
         stmt.setObject(3, technician.getskillid());
         stmt.setObject(4, technician.getModel());
-        stmt.setObject(5, technician.getLatitude());
-        stmt.setObject(6, technician.getLongitude());
-        stmt.setObject(7, technician.getMaxdist());
+
+        stmt.setObject(5, technician.getMaxdist());
 
         stmt.execute();
         ResultSet last_technician_id = stmt.getResultSet();
@@ -77,10 +76,10 @@ public class TechnicianRepo {
 
     public List<technician> findAll() {
         return jdbcTemplate.query("SELECT technicianid, username, technicianname, skillid, model, " +
-                        "latitude, longitude, maxdist FROM technician ",
+                        " maxdist FROM technician ",
                 (rs, rowNum) -> new technician(rs.getInt("technicianid"), rs.getString("username"),
                         rs.getString("technicianname"), rs.getShort("skillid"), rs.getString("model"),
-                        rs.getFloat("latitude"), rs.getFloat("longitude"), rs.getShort("maxdist"), null));
+                        rs.getShort("maxdist"), null));
     }
 
 
@@ -89,7 +88,7 @@ public class TechnicianRepo {
     public List<technician> findAllv2() {
         Time time = new Time();
 
-        String sql = "SELECT r.technicianid, r.technicianname, r.latitude, r.longitude, r.skillid, r.maxdist, r.model, u.name, c.value, c.unit, exists(select 1 from IS_DEPLOYED_TO " +
+        String sql = "SELECT r.technicianid, r.technicianname, r.skillid, r.maxdist, r.model, u.name, c.value, c.unit, exists(select 1 from IS_DEPLOYED_TO " +
                 "as d where r.technicianid = d.technicianid) as in_use, i.returndate as returndate " +
                 "FROM technician r INNER JOIN " +
                 "USERS u on r.username = u.username INNER JOIN HAS_time hc on r.technicianid = hc.technicianid INNER JOIN time c " +
@@ -102,8 +101,7 @@ public class TechnicianRepo {
                         rs.getString("technicianname"),
                         (short) rs.getInt("skillid"),
                         rs.getString("model"),
-                        (float) rs.getDouble("latitude"),
-                        (float) rs.getDouble("longitude"),
+
                         (short) rs.getInt("maxdist"),
                         null, // capabilities
                         new Time(rs.getString("unit"), rs.getDouble("value")), // time
@@ -120,13 +118,12 @@ public class TechnicianRepo {
     public List<technician> technicianSearch(String keyword, Integer skillid, Issue issue, Integer distanceInput) {
         Map<String, Object> params = new HashMap<String, Object>();
 
-        String sql = "SELECT r.technicianid, r.technicianname, r.latitude, r.longitude, r.skillid, r.model, r.maxdist, u.name, c.value, c.unit, exists(select 1 from IS_DEPLOYED_TO " +
+        String sql = "SELECT r.technicianid, r.technicianname, r.skillid, r.model, r.maxdist, u.name, c.value, c.unit, exists(select 1 from IS_DEPLOYED_TO " +
                 "as d where r.technicianid = d.technicianid) as in_use, i.returndate as returndate ";
 
         if (issue != null) {
-            sql += ", earth_distance(ll_to_earth(r.latitude, r.longitude), ll_to_earth(:latitude, :longitude)) as distance ";
-            params.put("latitude", issue.getLatitude());
-            params.put("longitude", issue.getLongitude());
+            sql += ", earth_distance(ll_to_earth(r., r.), ll_to_earth(:, :)) as distance ";
+
         }
         sql += "FROM technician r INNER JOIN " +
                 "USERS u on r.username = u.username INNER JOIN HAS_time hc on r.technicianid = hc.technicianid INNER JOIN time c " +
@@ -153,10 +150,10 @@ public class TechnicianRepo {
             sql += " AND ";
 
         if (issue != null) {
-            sql += " earth_distance(ll_to_earth(latitude,longitude)," +
-                    " ll_to_earth(:latitude,:longitude)) < r.maxdist * 1000 " +
-                    "AND earth_distance(ll_to_earth(latitude,longitude), " +
-                    "ll_to_earth(:latitude,:longitude)) < :threshold_distance * 1000;";
+            sql += " earth_distance(ll_to_earth(,)," +
+                    " ll_to_earth(:,:)) < r.maxdist * 1000 " +
+                    "AND earth_distance(ll_to_earth(,), " +
+                    "ll_to_earth(:,:)) < :threshold_distance * 1000;";
             params.put("threshold_distance", distanceInput);
         }
 
@@ -166,8 +163,7 @@ public class TechnicianRepo {
                 rs.getString("technicianname"),
                 (short) rs.getInt("skillid"),
                 rs.getString("model"),
-                (float) rs.getDouble("latitude"),
-                (float) rs.getDouble("longitude"),
+
                 (short) rs.getInt("maxdist"),
                 null, // capabilities
                 new Time(rs.getString("unit"), rs.getDouble("value")), // time
@@ -248,9 +244,9 @@ public class TechnicianRepo {
 
 
         jdbcTemplate.update("UPDATE technician SET username=?, technicianname=?, " +
-                        "skillid=?, model=?, latitude=?, longitude=?, maxdist=? WHERE technicianid=?",
+                        "skillid=?, model=?, maxdist=? WHERE technicianid=?",
                 technician.getUsername(), technician.gettechnicianname(), technician.getskillid(), technician.getModel(),
-                technician.getLatitude(), technician.getLongitude(), technician.getMaxdist(), technician.gettechnicianid());
+                technician.getMaxdist(), technician.gettechnicianid());
     }
 
 
